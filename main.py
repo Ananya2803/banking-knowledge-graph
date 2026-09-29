@@ -7,6 +7,7 @@
     python main.py leads               # cross-sell leads
     python main.py path client:1 client:2
     python main.py draw 2              # output/client_2.html
+    python main.py draw-district 20    # output/district_20.html
     python main.py neo4j               # CSVs for neo4j/load.cypher
 """
 
@@ -29,6 +30,7 @@ def main():
     p.add_argument("source")
     p.add_argument("target")
     sub.add_parser("draw").add_argument("client_id", type=int)
+    sub.add_parser("draw-district").add_argument("district_id", type=int)
     sub.add_parser("neo4j")
     args = parser.parse_args()
 
@@ -65,6 +67,10 @@ def main():
     elif args.command == "draw":
         from kg.visualize import draw
         print(f"Saved {draw(G, args.client_id)} - open it in a browser")
+
+    elif args.command == "draw-district":
+        from kg.visualize import draw_district
+        print(f"Saved {draw_district(G, args.district_id)} - open it in a browser")
 
     elif args.command == "neo4j":
         from kg.export_neo4j import export

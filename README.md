@@ -32,6 +32,10 @@ graph LR
 
 **11,533 nodes and 22,953 edges, all in one connected graph.**
 
+![District 20 (Strakonice): clients, accounts, loans, cards and banks](docs/district_20.png)
+
+*One district, from `python main.py draw-district 20`. Colours: green = district, blue = client, orange = account, purple = bank, teal = card, red = loan, **black = defaulted loan**. The HTML version is interactive: drag, zoom, and hover any node for its details.*
+
 ## Questions it answers
 
 | # | Question | How (graph walk) |
@@ -66,7 +70,8 @@ python main.py customer 2         # customer 360 for client 2
 python main.py risk               # default rate by region / account type
 python main.py leads              # cross-sell leads
 python main.py path client:1 loan:5314
-python main.py draw 2             # interactive graph -> output/client_2.html
+python main.py draw 2             # one client's neighbourhood -> output/client_2.html
+python main.py draw-district 20   # a whole district (~100 nodes) -> output/district_20.html
 pytest                            # tests
 ```
 
