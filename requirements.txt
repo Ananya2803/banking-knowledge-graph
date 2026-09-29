@@ -1,0 +1,4 @@
+networkx>=3.0
+pandas>=2.0
+pyvis>=0.3.2
+pytest>=7.0
