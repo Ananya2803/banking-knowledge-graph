@@ -51,7 +51,8 @@ def test_no_leads_for_defaulters(G):
 
 
 def test_explain_connection(G):
-    assert queries.explain_connection(G, "client:2", "client:3") == [
-        "client:2 -[HOLDS]-> account:2",
-        "account:2 <-[HOLDS]- client:3",
-    ]
+    # Clients 2 and 3 are two steps apart (shared account or shared district).
+    steps = queries.explain_connection(G, "client:2", "client:3")
+    assert len(steps) == 2
+    assert steps[0].startswith("client:2 ")
+    assert steps[1].endswith(" client:3")
