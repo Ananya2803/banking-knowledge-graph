@@ -2,7 +2,7 @@
 
 A small knowledge graph of a real (anonymised) retail bank: its **clients, accounts, loans, cards, branches and payments**. It's used to answer lending questions: a customer 360 view, credit risk, and cross-sell leads.
 
-Built with **Python + NetworkX**, with an optional export to **Neo4j / Cypher**.
+Built with **Python + NetworkX** (in-memory graph) and **Neo4j / Cypher** (graph database).
 
 ## Dataset
 
@@ -77,12 +77,24 @@ pytest                            # tests
 
 The data is already in `data/`. Run `python main.py download` only if you want to re-create it.
 
-### Optional: Neo4j
+### Neo4j (graph database)
 
-```bash
-python main.py neo4j              # writes neo4j/import/*.csv
-```
-Copy those CSVs into Neo4j's `import` folder, then run [`neo4j/load.cypher`](neo4j/load.cypher). [`neo4j/queries.cypher`](neo4j/queries.cypher) has the same questions in Cypher (Neo4j 5+).
+The same graph can be loaded into Neo4j, and the questions run as Cypher. This is tested on a free [Neo4j Aura](https://neo4j.com/cloud/aura-free/) instance (Neo4j 5.27); the Cypher results match the Python results exactly.
+
+1. Create a free Aura instance (or run Neo4j locally).
+2. Put its connection details in a `.env` file in the project root (git ignores this file):
+   ```
+   NEO4J_URI=neo4j+s://<your-id>.databases.neo4j.io
+   NEO4J_USERNAME=<username>
+   NEO4J_PASSWORD=<password>
+   ```
+3. Load the graph and run the queries:
+   ```bash
+   python main.py neo4j-load     # ~11.5K nodes + 23K relationships, about 25 s on Aura
+   python main.py neo4j-query    # runs neo4j/queries.cypher
+   ```
+
+The queries are in [`neo4j/queries.cypher`](neo4j/queries.cypher). You can also paste any of them into the Aura query editor to see the graph visually.
 
 ## Project layout
 
@@ -91,7 +103,8 @@ kg/download.py      download + clean the dataset -> data/*.csv
 kg/build_graph.py   CSVs -> NetworkX graph (nodes + relationships)
 kg/queries.py       the business questions above
 kg/visualize.py     interactive HTML view of one client (PyVis)
-kg/export_neo4j.py  graph -> CSVs for Neo4j
+kg/neo4j_db.py      load the graph into Neo4j + run the Cypher queries
+neo4j/queries.cypher  the business questions in Cypher
 main.py             command-line entry point
 tests/              pytest checks against the real data
 ```

@@ -8,7 +8,8 @@
     python main.py path client:1 client:2
     python main.py draw 2              # output/client_2.html
     python main.py draw-district 20    # output/district_20.html
-    python main.py neo4j               # CSVs for neo4j/load.cypher
+    python main.py neo4j-load          # copy the graph into Neo4j (needs .env)
+    python main.py neo4j-query         # run neo4j/queries.cypher
 """
 
 import argparse
@@ -31,12 +32,18 @@ def main():
     p.add_argument("target")
     sub.add_parser("draw").add_argument("client_id", type=int)
     sub.add_parser("draw-district").add_argument("district_id", type=int)
-    sub.add_parser("neo4j")
+    sub.add_parser("neo4j-load")
+    sub.add_parser("neo4j-query")
     args = parser.parse_args()
 
     if args.command == "download":
         from kg import download
         download.main()
+        return
+
+    if args.command == "neo4j-query":
+        from kg.neo4j_db import run_queries
+        run_queries()
         return
 
     G = build_graph()
@@ -72,9 +79,10 @@ def main():
         from kg.visualize import draw_district
         print(f"Saved {draw_district(G, args.district_id)} - open it in a browser")
 
-    elif args.command == "neo4j":
-        from kg.export_neo4j import export
-        print("Wrote neo4j/import/:", ", ".join(export(G)))
+    elif args.command == "neo4j-load":
+        from kg.neo4j_db import load
+        print("Loading into Neo4j ...")
+        load(G)
 
 
 if __name__ == "__main__":
